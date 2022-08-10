@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Gig;
 use Illuminate\Http\Request;
+use App\Http\Requests\AddGigRequest;
 
 class GigController extends Controller
 {
@@ -20,7 +21,18 @@ class GigController extends Controller
 
     public function index()
     {
-        //
+        try {
+            return response()->json([
+                'success' => true,
+                'message' => 'Account successfully created.',
+                'data' => Gig::with("creator")->all()
+            ], 200);
+        }catch(\Throwable $th) {
+            return response()->json([
+                "success" => false,
+                "message" => "Error occured while fetching all gigs",
+           ], 500);
+        }
     }
 
     /**
@@ -28,9 +40,17 @@ class GigController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
+    public function create(AddGigRequest $request) {
+        $input = $request->validated();
+
+        try {
+
+        }catch (\Throwable $th) {
+            return response()->json([
+                "success" => false,
+                "message" => "Error occured while creating a new gig",
+           ], 500);
+        }
     }
 
     /**
