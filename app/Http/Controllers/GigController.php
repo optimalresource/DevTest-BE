@@ -324,6 +324,7 @@ class GigController extends Controller
                 "success" => true,
                 "message" => "You updated the gig successfully",
             ], 200);
+            
         }catch(\Exception $e) {
             DB::rollBack();
             return response()->json([
