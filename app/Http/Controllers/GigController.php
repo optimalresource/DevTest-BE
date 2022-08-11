@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Gig;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Requests\AddGigRequest;
+use Illuminate\Support\Facades\DB;
 
 class GigController extends Controller
 {
@@ -18,6 +20,35 @@ class GigController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['index', 'show']]);
     }
+
+
+    /**
+    * @OA\Get(
+    * path="/api/v1/gigs",
+    * operationId="fetchGigs",
+    * tags={"Gig"},
+    * summary="All Gigs",
+    * description="Fetch all gigs",
+    *      @OA\Response(
+    *          response=201,
+    *          description="Fetched Gigs Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Fetched Gigs Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="Unprocessable Entity",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(response=404, description="Resource Not Found"),
+    *      @OA\Response(response=500, description="Internal Server Error"),
+    * )
+    */
 
     public function index()
     {
@@ -35,17 +66,150 @@ class GigController extends Controller
         }
     }
 
+
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(AddGigRequest $request) {
-        $input = $request->validated();
+    * @OA\Post(
+    * path="/api/v1/gig",
+    * operationId="createGig",
+    * tags={"Gig"},
+    * summary="Create Gig",
+    * description="Create a new gig",
+    *     security={ {"bearer": {} }},
+    *     @OA\RequestBody(
+    *           @OA\JsonContent(),
+    *           @OA\MediaType(
+    *               mediaType="multipart/form-data",
+    *               @OA\Schema(
+    *                   type="object",
+    *                   required={"min_salary", "max_salary", "role", "company", "country", "state", "address", "tags"},
+    *                   @OA\Property(property="min_salary", type="integer"),
+    *                   @OA\Property(property="max_salary", type="integer"),
+    *                   @OA\Property(property="role", type="string"),
+    *                   @OA\Property(property="company", type="string"),
+    *                   @OA\Property(property="country", type="string"),
+    *                   @OA\Property(property="state", type="string"),
+    *                   @OA\Property(property="address", type="string"),
+    *                   @OA\Property(property="tags", type="array", collectionFormat="multi",
+    *                      @OA\Items(
+    *                          type="string",
+    *                          example={"The tag field is required."},
+    *                       ),
+    *                   ),
+    *               ),
+    *           ),
+    *       ),
+    *      @OA\Response(
+    *          response=201,
+    *          description="Created Gig Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Created Gig Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="Unprocessable Entity",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(response=404, description="Resource Not Found"),
+    *      @OA\Response(response=500, description="Internal Server Error"),
+    * )
+    */
+
+    
+    public function store(AddGigRequest $addGigRequest, Request $request) {
+        $input = $addGigRequest->validated();
 
         try {
+            DB::beginTransaction();
+            $user = $request->user();
+            $gig = Gig::create([
+                'min_salary' => $input['min_salary'],
+                'max_salary' => $input['max_salary'],
+                'role' => $input['role'],
+                'company' => $input['company'],
+                'country' => $input['country'],
+                'state' => $input['state'],
+                'address' => $input['address'],
+                'creator' => $user->id,
+            ]);
+
+            foreach($input['tags'] as $key => $tag){
+                DB::table("tags")->updateOrInsert([
+                    'name' => $tag,
+                    'gig_id' => $gig->id
+                ],[
+                    'creator' => $user->id,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Gig successfully created.'
+            ], 200);
 
         }catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                "success" => false,
+                "message" => "Error occured while creating a new gig",
+           ], 500);
+        }
+    }
+
+     /**
+    * @OA\Get(
+    * path="/api/v1/gig",
+    * operationId="fetchGig",
+    * tags={"Gig"},
+    * summary="Show a Gig",
+    * description="Fetch a gig record",
+    *     @OA\Parameter(
+    *        description="ID of Gig",
+    *        in="path",
+    *        name="gigID",
+    *        required=true,
+    *        example="1",
+    *        @OA\Schema(
+    *           type="integer",
+    *           format="int64"
+    *        )
+    *     ),
+    *      @OA\Response(
+    *          response=201,
+    *          description="Fetched Gig Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Fetched Gig Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="Unprocessable Entity",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(response=404, description="Resource Not Found"),
+    *      @OA\Response(response=500, description="Internal Server Error"),
+    * )
+    */
+   
+    public function show(Gig $gig)
+    {
+        try {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data fetched successfully.',
+                'data' => $gig
+            ], 200); 
+        }catch(\Throwable $th) {
             return response()->json([
                 "success" => false,
                 "message" => "Error occured while creating a new gig",
@@ -54,58 +218,183 @@ class GigController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    * @OA\Put(
+    * path="/api/v1/gig",
+    * operationId="updateGig",
+    * tags={"Gig"},
+    * summary="Update a Gig",
+    * description="Update a gig",
+    *     security={ {"bearer": {} }},
+    *     @OA\Parameter(
+    *        description="ID of Gig",
+    *        in="path",
+    *        name="gigID",
+    *        required=true,
+    *        example="1",
+    *        @OA\Schema(
+    *           type="integer",
+    *           format="int64"
+    *        )
+    *     ),
+    *     @OA\RequestBody(
+    *           @OA\JsonContent(),
+    *           @OA\MediaType(
+    *               mediaType="multipart/form-data",
+    *               @OA\Schema(
+    *                   type="object",
+    *                   required={"min_salary", "max_salary", "role", "company", "country", "state", "address", "tags"},
+    *                   @OA\Property(property="min_salary", type="integer"),
+    *                   @OA\Property(property="max_salary", type="integer"),
+    *                   @OA\Property(property="role", type="string"),
+    *                   @OA\Property(property="company", type="string"),
+    *                   @OA\Property(property="country", type="string"),
+    *                   @OA\Property(property="state", type="string"),
+    *                   @OA\Property(property="address", type="string"),
+    *                   @OA\Property(property="tags", type="array", collectionFormat="multi",
+    *                      @OA\Items(
+    *                          type="string",
+    *                          example={"The tag field is required."},
+    *                       ),
+    *                   ),
+    *               ),
+    *           ),
+    *       ),
+    *      @OA\Response(
+    *          response=201,
+    *          description="Created Gig Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Created Gig Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="Unprocessable Entity",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(response=404, description="Resource Not Found"),
+    *      @OA\Response(response=500, description="Internal Server Error"),
+    * )
+    */
+
+    public function update(AddGigRequest $addGigRequest, Gig $gig, Request $request)
     {
-        return response(["data" => "I see you."]);
+        $input = $addGigRequest->validated();
+
+        try {
+            DB::beginTransaction();
+            $user = $request->user();
+            if($user->id === $gig->creator || strtolower($user->role->name) === "admin" || strtolower($user->role->name) === "super admin"){
+                $gig->min_salary = $input['min_salary'];
+                $gig->max_salary = $input['max_salary'];
+                $gig->role = $input['role'];
+                $gig->company = $input['company'];
+                $gig->country = $input['country'];
+                $gig->state = $input['state'];
+                $gig->address = $input['address'];
+                $gig->save();
+            }else{
+                return response()->json([
+                    "success" => false,
+                    "message" => "Unauthorized, you cannot update this gig",
+                ], 401);
+            }
+
+
+            foreach($input['tags'] as $tag){
+                DB::table('tags')->updateOrInsert([
+                    'name' => $tag,
+                    'gig_id' => $gig->id
+                ],[
+                    'creator' => $user->id,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                "success" => true,
+                "message" => "You updated the gig successfully",
+            ], 200);
+        }catch(\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                "success" => false,
+                "message" => "Error occured while updating a gig",
+           ], 500);
+        }
     }
 
+    
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Gig  $gig
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Gig $gig)
-    {
-        //
-    }
+    * @OA\Delete(
+    * path="/api/v1/gig",
+    * operationId="deleteGig",
+	* @OA\Parameter(
+    *    description="ID of Gig",
+    *    in="path",
+    *    name="gigID",
+    *    required=true,
+    *    example="1",
+    *    @OA\Schema(
+    *       type="integer",
+    *       format="int64"
+    *    )
+    * ),
+    * security={ {"bearer": {} }},
+    * tags={"Gig"},
+    * summary="Delete a Gig",
+    * description="Delete a gig record",
+    *      @OA\Response(
+    *          response=201,
+    *          description="Deleted Gig Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Deleted Gig Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="Unprocessable Entity",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(response=404, description="Resource Not Found"),
+    *      @OA\Response(response=500, description="Internal Server Error"),
+    * )
+    */
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Gig  $gig
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Gig $gig)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Gig  $gig
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Gig $gig)
+    public function destroy(Gig $gig, Request $request)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Gig  $gig
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Gig $gig)
-    {
-        //
+        try {
+            DB::beginTransaction();
+            $user = $request->user();
+            if($user->id === $gig->creator || strtolower($user->role->name) === "admin" || strtolower($user->role->name) === "super admin"){
+                if($gig->delete()){
+                    DB::commit();
+                    return response()->json([
+                        "success" => true,
+                        "message" => "You deleted the gig successfully",
+                    ], 200);
+                }
+            }else {
+                return response()->json([
+                    "success" => false,
+                    "message" => "Unauthorized, you cannot delete this gig",
+                ], 401);
+            }
+        }catch(\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                "success" => false,
+                "message" => "Error occured while updating a gig",
+           ], 500);
+        }
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTagsTable extends Migration
+class CreateAppInfosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateTagsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('app_infos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('creator')->index();
-            $table->foreignId('gig_id')->index();
-            $table->string('name');
-            $table->softDeletes();
+            $table->string("name");
+            $table->string("hq_address");
+            $table->string("phone1");
+            $table->string("phone2");
+            $table->string("sales_email");
+            $table->string("motto");
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ class CreateTagsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('app_infos');
     }
 }

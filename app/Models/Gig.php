@@ -13,8 +13,8 @@ class Gig extends Model
 
     protected $fillable = [
         "creator",
-        "minSalary",
-        "maxSalary",
+        "min_salary",
+        "max_salary",
         "role",
         "company",
         "country",
@@ -24,5 +24,20 @@ class Gig extends Model
 
     protected function creator() {
         return $this->belongsToMany(User::class, 'id', 'creator');
+    }
+
+    public function tags()
+    {
+        return $this->hasMany(Tag::class, 'gig_id');
+    }
+
+    // this is a recommended way to declare event handlers
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($gig) { // before delete() method call this
+             $gig->tags()->delete();
+             // do the rest of the cleanup...
+        });
     }
 }

@@ -16,13 +16,14 @@ class CreateGigsTable extends Migration
         Schema::create('gigs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('creator')->index();
-            $table->bigInteger('minSalary');
-            $table->bigInteger('maxSalary');
+            $table->bigInteger('min_salary');
+            $table->bigInteger('max_salary');
             $table->string('role');
             $table->string('company');
             $table->string('country');
             $table->string('state');
             $table->text('address');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

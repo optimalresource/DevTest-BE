@@ -30,6 +30,16 @@ class RegisterUserRequest extends FormRequest
         ];
     }
 
+    public function messages()
+    {
+        return [
+            'email.required' => 'Email is required!',
+            'name.required' => 'Name is required!',
+            'password.required' => 'Password is required!',
+            'password_confirmation.required' => 'Password confirmation is required!',
+        ];
+    }
+
     /**
      * prepare the data for validation.
      * 

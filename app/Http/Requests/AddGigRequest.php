@@ -25,8 +25,8 @@ class AddGigRequest extends FormRequest
     {
         return [
             'tags' => ['required', 'array'],
-            'minSalary' => ['required', 'numeric'], 
-            'maxSalary' => ['required', 'numeric'],
+            'min_salary' => ['required', 'numeric'], 
+            'max_salary' => ['required', 'numeric'],
             'role' => ['required', 'string', 'max:255'],
             'company' => ['required', 'string', 'max:255'],
             'country' => ['required', 'string', 'max:255'],
@@ -54,8 +54,8 @@ class AddGigRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'minSalary' => \strip_tags($this->minSalary),
-            'maxSalary' => \strip_tags($this->maxSalary),
+            'min_salary' => \strip_tags($this->minSalary),
+            'max_salary' => \strip_tags($this->maxSalary),
             'role' => \strip_tags($this->role),
             'company' => \strip_tags($this->company),
             'country' => \strip_tags($this->country),

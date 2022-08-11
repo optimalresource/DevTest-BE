@@ -35,7 +35,37 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            //
+            return response()->json(['message' => $e->getMessage()]);
         });
+    }
+
+    public function report(Throwable $e)
+    {
+        return response()->json(['message' => $e->getMessage()]);
+    }
+
+    public function render($request, Throwable $e)
+    {
+        if ($request->wantsJson()) {
+            $response = [
+                'errors' => 'Sorry, something went wrong.'
+            ];
+
+            if (config('app.debug')) {
+                $response['exception'] = get_class($e); // Reflection might be better here
+                $response['message'] = $e->getMessage();
+                $response['trace'] = $e->getTrace();
+            }
+
+            $status = 400;
+
+            return response()->json($response, $status);
+        }else {
+            return response()->json([
+                'type' => get_class($e),
+                'message' => $e->getMessage()
+            ]);
+        }
+        return parent::render($request, $e);
     }
 }
