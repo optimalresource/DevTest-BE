@@ -1,4 +1,4 @@
-<p align="center"><a href="https://dev-test-frontend.vercel.app" target="_blank"><img src="https://dev-test-frontend.vercel.app/images/svg/full_logo.svg" width="150"></a></p>
+<p align="center" style="padding-top:50px"><a href="https://dev-test-frontend.vercel.app" target="_blank"><img src="https://dev-test-frontend.vercel.app/images/svg/full_logo.svg" width="150"></a></p>
 
 <!-- <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
@@ -37,12 +37,13 @@ And voila. To run the above commands, remember to setup your database and add th
 
 ## DevTest Connection
 
-Follow me @optimalresource.
+Follow me on Github - <a href="https://github.com/optimalresource" target="_blank">@optimalresource</a>.
+Connect with me on LinkedIn - <a href="https://linkedin.com/in/joseph-okafor-92007793" target="_blank">Joseph Okafor</a>.
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within DevTest, please send an e-mail to Joseph Okafor via [joseph@landearn.com](mailto:joseph@landearn.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The DevTest project is a subset of the Laravel framework which is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
