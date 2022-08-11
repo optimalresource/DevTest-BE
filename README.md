@@ -7,53 +7,37 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## About DevTest
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+DevTest is a Laravel web application development test. The application will perform a CRUD on gigs and manage few model relationships. Authentication is also a key emphasis. Having completed the basic need of the project, the project will be able to handle the following requests:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   [Register New User](https://devtest.bumasys.com/api/v1/auth/register).
+-   [Login a User](https://devtest.bumasys.com/api/v1/auth/login).
+-   [Create a New Gig](https://devtest.bumasys.com/api/v1/gig).
+-   [Update a Gig](https://devtest.bumasys.com/api/v1/gig).
+-   [View a Gig](https://devtest.bumasys.com/api/v1/gig).
+-   [Delete a Gig](https://devtest.bumasys.com/api/v1/gig).
+-   [View all Gigs](https://devtest.bumasys.com/api/v1/gig).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Emphasis is placed on user role, if a normal user did not create a gig, and he/she is not an admin or super admin, he/she won't be able to update or delete that gig, but can view.
 
-## Learning Laravel
+The full API documentation of this project can be found here:
+<a href="https://devtest.bumasys.com/api/documentation" target="_blank">https://devtest.bumasys.com/api/documentation</a>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## To Deploy
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-   Clone this repository
+-   Run composer install
+-   Run php artisan migrate
+-   Run php artisan db:seed
+-   Run php artisan passport:install --force
+-   Run php artisan serve
 
-## Laravel Sponsors
+And voila. To run the above commands, remember to setup your database and add the settings in your .env file. This installation comes with a sample .env file, just rename it to .env
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## DevTest Connection
 
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Follow me @optimalresource.
 
 ## Security Vulnerabilities
 
