@@ -30,10 +30,11 @@ class AddGigRequest extends FormRequest
             'role' => ['required', 'string', 'max:255'],
             'company' => ['required', 'string', 'max:255'],
             'country' => ['required', 'string', 'max:255'],
-            // Because of the timeline, country, state and address will be captured as strings instead of foreign keys.
             'state' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'boolean']
+            'address' => ['required', 'string', 'max:500']
         ];
+        // Because of the timeline, country, state and address will be captured as strings instead of foreign keys.
+
     }
 
      /**
@@ -54,8 +55,8 @@ class AddGigRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'min_salary' => \strip_tags($this->minSalary),
-            'max_salary' => \strip_tags($this->maxSalary),
+            'min_salary' => \strip_tags($this->min_salary),
+            'max_salary' => \strip_tags($this->max_salary),
             'role' => \strip_tags($this->role),
             'company' => \strip_tags($this->company),
             'country' => \strip_tags($this->country),

@@ -7,6 +7,7 @@ use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Requests\AddGigRequest;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class GigController extends Controller
 {
@@ -55,10 +56,10 @@ class GigController extends Controller
         try {
             return response()->json([
                 'success' => true,
-                'message' => 'Account successfully created.',
-                'data' => Gig::with("creator")->all()
+                'message' => 'All Gigs fetched successfully',
+                'data' => Gig::with("creator_info")->with("tags")->get()
             ], 200);
-        }catch(\Throwable $th) {
+        }catch(\Exception $e) {
             return response()->json([
                 "success" => false,
                 "message" => "Error occured while fetching all gigs",
@@ -120,8 +121,8 @@ class GigController extends Controller
     */
 
     
-    public function store(AddGigRequest $addGigRequest, Request $request) {
-        $input = $addGigRequest->validated();
+    public function store(AddGigRequest $request) {
+        $input = $request->validated();
 
         try {
             DB::beginTransaction();
@@ -140,7 +141,9 @@ class GigController extends Controller
             foreach($input['tags'] as $key => $tag){
                 DB::table("tags")->updateOrInsert([
                     'name' => $tag,
-                    'gig_id' => $gig->id
+                    'gig_id' => $gig->id,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
                 ],[
                     'creator' => $user->id,
                 ]);
@@ -153,7 +156,7 @@ class GigController extends Controller
                 'message' => 'Gig successfully created.'
             ], 200);
 
-        }catch (\Throwable $th) {
+        }catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 "success" => false,
@@ -204,15 +207,16 @@ class GigController extends Controller
     public function show(Gig $gig)
     {
         try {
+            $gig_info = Gig::where('id', '=', $gig->id)->with('creator_info')->with('tags')->first();
             return response()->json([
                 'success' => true,
-                'message' => 'Data fetched successfully.',
-                'data' => $gig
+                'message' => 'Gig record fetched successfully.',
+                'data' => $gig_info
             ], 200); 
-        }catch(\Throwable $th) {
+        }catch(\Exception $e) {
             return response()->json([
                 "success" => false,
-                "message" => "Error occured while creating a new gig",
+                "message" => "Error occured while viewing the gig record",
            ], 500);
         }
     }
@@ -280,9 +284,9 @@ class GigController extends Controller
     * )
     */
 
-    public function update(AddGigRequest $addGigRequest, Gig $gig, Request $request)
+    public function update(AddGigRequest $request, Gig $gig)
     {
-        $input = $addGigRequest->validated();
+        $input = $request->validated();
 
         try {
             DB::beginTransaction();
@@ -310,6 +314,7 @@ class GigController extends Controller
                     'gig_id' => $gig->id
                 ],[
                     'creator' => $user->id,
+                    'updated_at' => Carbon::now()
                 ]);
             }
 
@@ -319,7 +324,7 @@ class GigController extends Controller
                 "success" => true,
                 "message" => "You updated the gig successfully",
             ], 200);
-        }catch(\Throwable $th) {
+        }catch(\Exception $e) {
             DB::rollBack();
             return response()->json([
                 "success" => false,
@@ -389,11 +394,11 @@ class GigController extends Controller
                     "message" => "Unauthorized, you cannot delete this gig",
                 ], 401);
             }
-        }catch(\Throwable $th) {
+        }catch(\Exception $e) {
             DB::rollBack();
             return response()->json([
                 "success" => false,
-                "message" => "Error occured while updating a gig",
+                "message" => "Error occured while deleting a gig",
            ], 500);
         }
     }

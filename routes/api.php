@@ -23,7 +23,7 @@ Route::group(['prefix' => 'v1'] , function(){
     Route::delete('/gig/{gig}', [GigController::class, "destroy"]);
     Route::get('/gigs', [GigController::class, "index"]);
 
-    Route::post('/auth/login', [AuthController::class, "login"]);
+    Route::post('/auth/login', [AuthController::class, "login"])->name('login');
     Route::post('/auth/register', [AuthController::class, "register"]);
 });
 

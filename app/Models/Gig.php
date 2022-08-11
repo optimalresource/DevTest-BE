@@ -22,8 +22,8 @@ class Gig extends Model
         "address",
     ];
 
-    protected function creator() {
-        return $this->belongsToMany(User::class, 'id', 'creator');
+    public function creator_info() {
+        return $this->belongsTo(User::class, 'creator', 'id');
     }
 
     public function tags()
