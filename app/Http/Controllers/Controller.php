@@ -11,8 +11,15 @@ use Illuminate\Routing\Controller as BaseController;
  * @OA\Info(
  *    title="DevTest Application API Documentation",
  *    version="1.0.0",
- * )
+ * ),
+ * 	@oas\SecurityScheme(
+ *		securityScheme="bearerAuth",
+ *		type="http",
+ *		scheme="bearer",
+ *		bearerFormat="JWT"
+ *	)
  */
+
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;

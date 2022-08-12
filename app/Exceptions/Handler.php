@@ -46,6 +46,10 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
+        if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+
         if ($request->wantsJson()) {
             $response = [
                 'errors' => 'Sorry, something went wrong.'
