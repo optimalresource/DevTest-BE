@@ -47,7 +47,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $e)
     {
         if ($e instanceof \Illuminate\Auth\AuthenticationException) {
-            return response()->json(['message' => $e->getMessage()]);
+            return response()->json(['message' => $e->getMessage()], 401);
         }
 
         if ($request->wantsJson()) {
