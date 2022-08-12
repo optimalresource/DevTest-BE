@@ -12,13 +12,12 @@ use Illuminate\Routing\Controller as BaseController;
  *    title="DevTest Application API Documentation",
  *    version="1.0.0",
  * ),
- * 	@oas\SecurityScheme(
- *		securityScheme="bearerAuth",
- *		type="http",
- *		scheme="bearer",
- *		bearerFormat="JWT"
- *	)
- */
+ * @OAS\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer"
+ * )
+ **/
 
 class Controller extends BaseController
 {
